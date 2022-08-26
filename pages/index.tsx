@@ -1,27 +1,14 @@
 import type { NextPage } from "next";
 import * as React from "react";
 import { useQuery } from "react-query";
-import { unsplashQueryHandler } from "../unplash/api";
-import { UnsplashPhoto } from "../unplash/types";
-import PhotoList from "../components/PhotoList";
-import {
-  CircularProgress,
-  TextField,
-  IconButton,
-  InputAdornment,
-  Typography,
-} from "@mui/material";
-
-import SearchIcon from "@mui/icons-material/Search";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-
-import { usePagination } from "../hooks/usePagination";
-import { useDebouncedSearch } from "../hooks/useDebouncedSearch";
+import { CircularProgress } from "@mui/material";
+import { UnsplashPhoto, unsplashQueryHandler } from "../unplash";
+import { PageButtons, PhotoList, Search } from "../components";
+import { usePagination, useDebouncedSearch } from "../hooks";
 
 const Home: NextPage = () => {
   // debounce changes in value to minimize network requests
-  const { setSearchVal, debouncedSearchVal } = useDebouncedSearch("", 800);
+  const { debouncedSearchVal, setSearchVal } = useDebouncedSearch("", 800);
 
   const { pageNumber, handlePageClick } = usePagination(1, [
     debouncedSearchVal,
@@ -39,45 +26,21 @@ const Home: NextPage = () => {
 
   return (
     <div>
-      <TextField
-        label="Search Unsplash"
-        onChange={(event: { target: { value: string } }) => {
-          setSearchVal(event.target.value);
-        }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment>
-              <IconButton>
-                <SearchIcon />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
+      <Search label="Search Unsplash" handleChange={setSearchVal} />
       <br />
       {isLoading ? (
         <CircularProgress />
       ) : (
         <div>
-          <div>
-            <IconButton
-              onClick={() => {
-                handlePageClick(-1);
-              }}
-            >
-              <ArrowBackIcon />
-            </IconButton>
-            <IconButton
-              onClick={() => {
-                handlePageClick(1);
-              }}
-            >
-              <ArrowForwardIcon />
-            </IconButton>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary">
-              Page: {pageNumber}
-            </Typography>
-          </div>
+          <PageButtons
+            pageNumber={pageNumber}
+            handleLeft={() => {
+              handlePageClick(-1);
+            }}
+            handleRight={() => {
+              handlePageClick(1);
+            }}
+          />
           <PhotoList photos={data}></PhotoList>
         </div>
       )}

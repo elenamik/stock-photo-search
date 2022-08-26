@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useDebounce } from "./useDebounce";
+import { useDebounce } from "../hooks";
 
 /***
  * @param debounceInterval in ms
