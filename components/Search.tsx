@@ -14,7 +14,7 @@ export const Search: React.FC<{
       }}
       InputProps={{
         endAdornment: (
-          <InputAdornment>
+          <InputAdornment position="end">
             <IconButton>
               <SearchIcon />
             </IconButton>
