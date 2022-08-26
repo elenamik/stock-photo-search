@@ -1,48 +1,49 @@
 import type { NextPage } from "next";
 import * as React from "react";
 import { useQuery } from "react-query";
-import { unsplashQueryHandler } from "../unplash/api";
-import { UnsplashPhoto } from "../unplash/types";
-import PhotoList from "../components/PhotoList";
-import {
-  CircularProgress,
-  TextField,
-  IconButton,
-  InputAdornment,
-} from "@mui/material";
-
-import SearchIcon from "@mui/icons-material/Search";
+import { CircularProgress } from "@mui/material";
+import { UnsplashPhoto, unsplashQueryHandler } from "../unplash";
+import { PageButtons, PhotoList, Search } from "../components";
+import { usePagination, useDebouncedSearch } from "../hooks";
 
 const Home: NextPage = () => {
-  const [searchVal, setSearchVal] = React.useState<string | undefined>();
+  // debounce changes in value to minimize network requests
+  const { debouncedSearchVal, setSearchVal } = useDebouncedSearch("", 800);
+
+  const { pageNumber, handlePageClick } = usePagination(1, [
+    debouncedSearchVal,
+  ]);
 
   const { isLoading, data } = useQuery<UnsplashPhoto[]>({
     queryFn: async () => {
-      return unsplashQueryHandler(searchVal);
+      return unsplashQueryHandler(pageNumber, debouncedSearchVal);
     },
-    queryKey: searchVal,
+    queryKey: [debouncedSearchVal, pageNumber],
+    onError: (error: any) => {
+      alert(error);
+    },
   });
 
   return (
-    <div className="">
-      <TextField
-        label="Search unsplash"
-        onChange={(event: { target: { value: string } }) => {
-          console.log();
-          setSearchVal(event.target.value);
-        }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment>
-              <IconButton>
-                <SearchIcon />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
+    <div>
+      <Search label="Search Unsplash" handleChange={setSearchVal} />
       <br />
-      {isLoading ? <CircularProgress /> : <PhotoList photos={data}></PhotoList>}
+      {isLoading ? (
+        <CircularProgress />
+      ) : (
+        <div>
+          <PageButtons
+            pageNumber={pageNumber}
+            handleLeft={() => {
+              handlePageClick(-1);
+            }}
+            handleRight={() => {
+              handlePageClick(1);
+            }}
+          />
+          <PhotoList photos={data}></PhotoList>
+        </div>
+      )}
     </div>
   );
 };
