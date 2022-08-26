@@ -1,7 +1,13 @@
 .photo {
     height: auto;
     width: auto;
-    max-width: 300px;
+    max-width: 460px;
     max-height: 300px;
     object-fit: scale-down;
+    margin: 0.5em;
+}
+
+.photoList {
+    display: flex;
+    flex-wrap: wrap;
 }
