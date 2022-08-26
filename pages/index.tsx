@@ -12,15 +12,19 @@ import {
 } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
+import { useDebounce } from "../hooks/useDebounce";
 
 const Home: NextPage = () => {
-  const [searchVal, setSearchVal] = React.useState<string | undefined>("");
+  const [searchVal, setSearchVal] = React.useState<string>("");
+
+  // debounce search input by 700ms to minimize network requests
+  const debouncedSearchVal = useDebounce(searchVal, 700);
 
   const { isLoading, data } = useQuery<UnsplashPhoto[]>({
     queryFn: async () => {
-      return unsplashQueryHandler(searchVal);
+      return unsplashQueryHandler(debouncedSearchVal);
     },
-    queryKey: searchVal,
+    queryKey: debouncedSearchVal,
   });
 
   return (

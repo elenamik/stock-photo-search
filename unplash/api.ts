@@ -43,7 +43,6 @@ const makeUnsplashRequest = (url: string) => {
  * Function to handle api calls to unsplash
  */
 export const unsplashQueryHandler = async (searchVal: string) => {
-  console.log("SEARCH VAL", typeof searchVal, searchVal);
   let url: string;
   if (searchVal !== "") {
     url = unsplashSearchUrl(searchVal);
