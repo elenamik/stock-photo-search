@@ -31,7 +31,7 @@ const Home: NextPage = () => {
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
             Failed to Load
           </Typography>
-        </CardContent>{" "}
+        </CardContent>
       </Card>
     );
   }
