@@ -1,43 +1,48 @@
 import type { NextPage } from "next";
 import * as React from "react";
 import { useQuery } from "react-query";
-import { UNSPLASH_API_KEY, UNSPLASH_GET } from "../unplash/api";
+import { unsplashQueryHandler } from "../unplash/api";
 import { UnsplashPhoto } from "../unplash/types";
 import PhotoList from "../components/PhotoList";
-import { CircularProgress, Card, CardContent, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  TextField,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
+
+import SearchIcon from "@mui/icons-material/Search";
 
 const Home: NextPage = () => {
-  const fetchImages = async () => {
-    return fetch(UNSPLASH_GET, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept-Version": "v1",
-        Authorization: `Client-ID ${UNSPLASH_API_KEY}`,
-      },
-    }).then((res) => res.json());
-  };
+  const [searchVal, setSearchVal] = React.useState<string | undefined>();
 
   const { isLoading, data } = useQuery<UnsplashPhoto[]>({
-    queryFn: fetchImages,
+    queryFn: async () => {
+      return unsplashQueryHandler(searchVal);
+    },
+    queryKey: searchVal,
   });
 
-  if (isLoading) {
-    return <CircularProgress />;
-  } else if (!data) {
-    return (
-      <Card sx={{ minWidth: 275 }}>
-        <CardContent>
-          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-            Failed to Load
-          </Typography>
-        </CardContent>
-      </Card>
-    );
-  }
   return (
     <div className="">
-      <PhotoList photos={data}></PhotoList>
+      <TextField
+        label="Search unsplash"
+        onChange={(event: { target: { value: string } }) => {
+          console.log();
+          setSearchVal(event.target.value);
+        }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment>
+              <IconButton>
+                <SearchIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+      <br />
+      {isLoading ? <CircularProgress /> : <PhotoList photos={data}></PhotoList>}
     </div>
   );
 };
