@@ -61,7 +61,6 @@ export const unsplashQueryHandler = async (
   pageNumber: number,
   searchVal?: string
 ) => {
-  console.log("making call for page", pageNumber);
   const url = unsplashUrl(pageNumber, searchVal);
 
   const response = await makeUnsplashRequest(url);
