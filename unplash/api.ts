@@ -42,9 +42,10 @@ const makeUnsplashRequest = (url: string) => {
 /***
  * Function to handle api calls to unsplash
  */
-export const unsplashQueryHandler = async (searchVal?: string) => {
+export const unsplashQueryHandler = async (searchVal: string) => {
+  console.log("SEARCH VAL", typeof searchVal, searchVal);
   let url: string;
-  if (searchVal) {
+  if (searchVal !== "") {
     url = unsplashSearchUrl(searchVal);
   } else url = UNSPLASH_GET_URL;
 

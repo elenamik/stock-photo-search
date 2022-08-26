@@ -2,15 +2,7 @@ import * as React from "react";
 import { UnsplashPhoto } from "../unplash/types";
 import Photo from "./Photo";
 import styles from "../styles/photos.module.css";
-import {
-  CircularProgress,
-  Card,
-  CardContent,
-  Typography,
-  TextField,
-  IconButton,
-  InputAdornment,
-} from "@mui/material";
+import { Card, CardContent, Typography } from "@mui/material";
 
 const PhotoList: React.FC<{ photos?: UnsplashPhoto[] }> = ({ photos }) => {
   if (!photos) {

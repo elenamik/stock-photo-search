@@ -14,7 +14,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 
 const Home: NextPage = () => {
-  const [searchVal, setSearchVal] = React.useState<string | undefined>();
+  const [searchVal, setSearchVal] = React.useState<string | undefined>("");
 
   const { isLoading, data } = useQuery<UnsplashPhoto[]>({
     queryFn: async () => {
