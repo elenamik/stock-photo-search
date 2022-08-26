@@ -16,43 +16,32 @@ import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
-import { useDebounce } from "../hooks/useDebounce";
+import { usePagination } from "../hooks/usePagination";
+import { useDebouncedSearch } from "../hooks/useDebouncedSearch";
 
 const Home: NextPage = () => {
-  const [searchVal, setSearchVal] = React.useState<string>("");
+  // debounce changes in value to minimize network requests
+  const { setSearchVal, debouncedSearchVal } = useDebouncedSearch("", 800);
 
-  // debounce search input by 700ms to minimize network requests
-  const debouncedSearchVal = useDebounce(searchVal, 700);
-
-  // if user decides to search, reset page numbers
-  React.useEffect(() => {
-    setPageNumber(1);
-  }, [debouncedSearchVal]);
-
-  const [pageNumber, setPageNumber] = React.useState<number>(1);
-  console.log(pageNumber);
-
-  const handlePageClick = (change: number) => {
-    // either +1 or -1
-
-    if (pageNumber + change >= 1) {
-      setPageNumber(pageNumber + change);
-    }
-  };
+  const { pageNumber, handlePageClick } = usePagination(1, [
+    debouncedSearchVal,
+  ]);
 
   const { isLoading, data } = useQuery<UnsplashPhoto[]>({
     queryFn: async () => {
       return unsplashQueryHandler(pageNumber, debouncedSearchVal);
     },
     queryKey: [debouncedSearchVal, pageNumber],
+    onError: (error: any) => {
+      alert(error);
+    },
   });
 
   return (
-    <div className="">
+    <div>
       <TextField
-        label="Search unsplash"
+        label="Search Unsplash"
         onChange={(event: { target: { value: string } }) => {
-          console.log();
           setSearchVal(event.target.value);
         }}
         InputProps={{
@@ -85,11 +74,7 @@ const Home: NextPage = () => {
             >
               <ArrowForwardIcon />
             </IconButton>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
+            <Typography sx={{ fontSize: 14 }} color="text.secondary">
               Page: {pageNumber}
             </Typography>
           </div>
