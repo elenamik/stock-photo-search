@@ -13,15 +13,30 @@ const UNSPLASH_API_URL = "https://api.unsplash.com";
 const UNSPLASH_GET_URL = UNSPLASH_API_URL + "/photos";
 const UNSPLASH_SEARCH_URL = UNSPLASH_API_URL + "/search/photos";
 
-// constructing url for search
-const unsplashSearchUrl = (query: string) => {
-  return (
-    UNSPLASH_SEARCH_URL +
-    "?" +
-    new URLSearchParams({
-      query,
-    })
-  );
+/***
+ * Constructs API route based on search input (if any) and page number
+ * If no search input given, the 'List photos' api is called.
+ * If search input is given, the 'Search photos' api is called.
+ */
+const unsplashUrl = (pageNumber: number, searchVal?: string) => {
+  let url: string;
+  if (searchVal !== "") {
+    url =
+      UNSPLASH_SEARCH_URL +
+      "?" +
+      new URLSearchParams({
+        query: searchVal!,
+        page: pageNumber.toString(),
+      });
+  } else {
+    url =
+      UNSPLASH_GET_URL +
+      "?" +
+      new URLSearchParams({
+        page: pageNumber.toString(),
+      });
+  }
+  return url;
 };
 
 /***
@@ -42,11 +57,12 @@ const makeUnsplashRequest = (url: string) => {
 /***
  * Function to handle api calls to unsplash
  */
-export const unsplashQueryHandler = async (searchVal: string) => {
-  let url: string;
-  if (searchVal !== "") {
-    url = unsplashSearchUrl(searchVal);
-  } else url = UNSPLASH_GET_URL;
+export const unsplashQueryHandler = async (
+  pageNumber: number,
+  searchVal?: string
+) => {
+  console.log("making call for page", pageNumber);
+  const url = unsplashUrl(pageNumber, searchVal);
 
   const response = await makeUnsplashRequest(url);
   // photos and search have different responses structures
